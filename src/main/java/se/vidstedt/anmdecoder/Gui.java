@@ -22,6 +22,7 @@ public class Gui extends Application {
         private final Label label;
         private final byte[] pixels;
 
+        private volatile int currentRecordIndex = -1;
         private volatile boolean exit = false;
 
         Animator(Animation animation, WritableImage image, Label label) {
@@ -41,27 +42,28 @@ public class Gui extends Application {
             return Color.rgb(color[0], color[1], color[2]);
         }
 
-        private void showRecord(int index) {
-            Record record = animation.getRecord(index);
-            record.decode(pixels);
-            PixelWriter writer = image.getPixelWriter();
-            for (int y = 0; y < animation.getHeader().getHeight(); y++) {
-                for (int x = 0; x < animation.getHeader().getWidth(); x++) {
-                    int paletteIndex = Byte.toUnsignedInt(pixels[y * animation.getHeader().getWidth() + x]);
-                    writer.setColor(x, y, getColor(animation.getPalette(), paletteIndex));
+        private void showRecord(int recordIndex) {
+            Record r = animation.getRecord(recordIndex);
+            if (r != null) {
+                Record record = animation.getRecord(recordIndex);
+                record.decode(pixels);
+                PixelWriter writer = image.getPixelWriter();
+                for (int y = 0; y < animation.getHeader().getHeight(); y++) {
+                    for (int x = 0; x < animation.getHeader().getWidth(); x++) {
+                        int paletteIndex = Byte.toUnsignedInt(pixels[y * animation.getHeader().getWidth() + x]);
+                        writer.setColor(x, y, getColor(animation.getPalette(), paletteIndex));
+                    }
                 }
+                currentRecordIndex = recordIndex;
             }
-            label.setText("Record: " + index);
+            label.setText(String.format("Frame: %-3d Record: %-3d", recordIndex, currentRecordIndex));
         }
 
         public void run() {
             while (!exit) {
                 for (int i = 0; i < animation.getRecords().length; i++) {
-                    Record r = animation.getRecord(i);
-                    if (r != null) {
-                        int j = i;
-                        Platform.runLater(() -> showRecord(j));
-                    }
+                    int recordIndex = i;
+                    Platform.runLater(() -> showRecord(recordIndex));
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
