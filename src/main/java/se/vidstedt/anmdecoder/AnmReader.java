@@ -34,7 +34,7 @@ class AnmReader {
 
         ArrayList<LargePage> lps = new ArrayList<>();
         for (int i = 0; i < largePagesHeaders.length; i++) {
-            if (largePagesHeaders[i].nRecords != 0) {
+            if (largePagesHeaders[i].getnRecords() != 0) {
                 bb.position(header.getLpfTableOffset() + MAX_PAGES * 6 + (i << 16));
                 lps.add(readLargePage(bb, largePagesHeaders[i]));
             }
@@ -42,8 +42,8 @@ class AnmReader {
 
         Record[] records = new Record[header.getnRecords()];
         for (LargePage lp : lps) {
-            int base = lp.header.baseRecord;
-            System.arraycopy(lp.records, 0, records, base, lp.header.nRecords);
+            int base = lp.getHeader().getBaseRecord();
+            System.arraycopy(lp.getRecords(), 0, records, base, lp.getHeader().getnRecords());
         }
 
         return new Animation(header, palette, records);
@@ -126,13 +126,13 @@ class AnmReader {
 
         LargePageHeader header = readLargePageHeader(bb);
 
-        if (header.nRecords != headerCopy.nRecords) {
+        if (header.getnRecords() != headerCopy.getnRecords()) {
             throw new IllegalArgumentException();
         }
-        if (header.baseRecord != headerCopy.baseRecord) {
+        if (header.getBaseRecord() != headerCopy.getBaseRecord()) {
             throw new IllegalArgumentException();
         }
-        if (header.nBytes != headerCopy.nBytes) {
+        if (header.getnBytes() != headerCopy.getnBytes()) {
             throw new IllegalArgumentException();
         }
 
@@ -141,19 +141,19 @@ class AnmReader {
             throw new IllegalArgumentException();
         }
 
-        int[] recordSizes = new int[header.nRecords];
-        Record[] records = new Record[header.nRecords];
-        for (int i = 0; i < header.nRecords; i++) {
+        int[] recordSizes = new int[header.getnRecords()];
+        Record[] records = new Record[header.getnRecords()];
+        for (int i = 0; i < header.getnRecords(); i++) {
             recordSizes[i] = Short.toUnsignedInt(bb.getShort());
         }
 
-        for (int i = 0; i < header.nRecords; i++) {
+        for (int i = 0; i < header.getnRecords(); i++) {
             if (recordSizes[i] != 0) {
                 records[i] = readRecord(bb, recordSizes[i]);
-                if (records[i].data[0] != 66) {
+                if (records[i].getData()[0] != 66) {
                     throw new IllegalArgumentException();
                 }
-                if (records[i].data[1] != 0) {
+                if (records[i].getData()[1] != 0) {
                     throw new IllegalArgumentException();
                 }
             }

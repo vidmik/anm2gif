@@ -1,7 +1,6 @@
 package se.vidstedt.anmdecoder;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 class RunSkipDump {
     public void runSkipDump(ByteBuffer src, ByteBuffer dst) {

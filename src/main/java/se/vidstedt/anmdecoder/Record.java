@@ -4,12 +4,16 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Record {
-    final byte[] data;
+    private final byte[] data;
     private final int fileOffset;
 
     Record(byte[] data, int fileOffset) {
         this.data = data;
         this.fileOffset = fileOffset;
+    }
+
+    public byte[] getData() {
+        return data;
     }
 
     public void decode(byte[] pixels) {

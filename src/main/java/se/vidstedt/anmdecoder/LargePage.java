@@ -1,9 +1,9 @@
 package se.vidstedt.anmdecoder;
 
 class LargePage {
-    final LargePageHeader header;
+    private final LargePageHeader header;
     private final short bytesContinued;
-    final Record[] records;
+    private final Record[] records;
     private final int fileOffset;
 
     LargePage(LargePageHeader header, short bytesContinued, Record[] records, int fileOffset) {
@@ -11,6 +11,14 @@ class LargePage {
         this.bytesContinued = bytesContinued;
         this.records = records;
         this.fileOffset = fileOffset;
+    }
+
+    public LargePageHeader getHeader() {
+        return header;
+    }
+
+    public Record[] getRecords() {
+        return records;
     }
 
     public String toString() {
