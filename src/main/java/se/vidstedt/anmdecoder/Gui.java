@@ -78,7 +78,7 @@ public class Gui extends Application {
             System.out.println("Usage: <infile.anm>");
             System.exit(1);
         }
-        Animation animation = new AnmReader().decode(new File(getParameters().getRaw().get(0)));
+        Animation animation = new AnmReader().read(new File(getParameters().getRaw().get(0)));
         ImageView imageView = new ImageView();
         WritableImage writableImage = new WritableImage(animation.getHeader().getWidth(), animation.getHeader().getHeight());
         imageView.setImage(writableImage);

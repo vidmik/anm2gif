@@ -13,72 +13,21 @@ class AnmReader {
     private static final int MAGIC_CONTENT_TYPE = 0x4d494e41; // "ANIM"
     private static final int MAX_PAGES = 256;
 
-    Animation decode(File file) throws IOException {
+    Animation read(File file) throws IOException {
         byte[] data = Files.readAllBytes(file.toPath());
         ByteBuffer bb = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
 
-        AnmHeader header = new AnmHeader();
-
-        header.id = bb.getInt();
-        if (header.id != MAGIC) {
-            throw new IllegalArgumentException();
-        }
-        header.maxLps = bb.getShort();
-        header.nLps = bb.getShort();
-        header.nRecords = bb.getInt();
-        header.maxRecsPerLps = bb.getShort();
-        header.lpfTableOffset = bb.getShort();
-        header.contentType = bb.getInt();
-        if (header.contentType != MAGIC_CONTENT_TYPE) {
-            throw new IllegalArgumentException();
-        }
-        header.width = bb.getShort();
-        header.height = bb.getShort();
-        header.variant = bb.get();
-        if (header.variant != 0) {
-            throw new IllegalArgumentException();
-        }
-        header.version = bb.get();
-        header.hasLastDelta = bb.get();
-        header.lastDeltaValid = bb.get();
-        header.pixelType = bb.get();
-        if (header.pixelType != 0) {
-            throw new IllegalArgumentException();
-        }
-        header.compressionType = bb.get();
-        if (header.compressionType != 1) {
-            throw new IllegalArgumentException();
-        }
-        header.otherRecsPerFrm = bb.get();
-        if (header.otherRecsPerFrm != 0) {
-            throw new IllegalArgumentException();
-        }
-        header.bitmapType = bb.get();
-        if (header.bitmapType != 1) {
-            throw new IllegalArgumentException();
-        }
-        bb.get(header.recordType);
-        header.nFrames = bb.getInt();
-        header.framesPerSecond = bb.getShort();
-        bb.get(header.pad);
-        header.cycles = IntStream.range(0, 16).mapToObj(i -> readRange(bb)).toArray(Range[]::new);
-
+        AnmHeader header = readHeader(bb);
         if (bb.position() != 256) {
             throw new IllegalArgumentException("bb.position: " + bb.position());
         }
 
-        int[] paletteEntries = new int[256];
-        for (int i = 0; i < 256; i++) {
-            paletteEntries[i] = bb.getInt();
-        }
-        Palette palette = new Palette(paletteEntries);
-
+        Palette palette = readPalette(bb);
         if (bb.position() != 1280) {
             throw new IllegalArgumentException();
         }
 
-        LargePageHeader[] largePagesHeaders = IntStream.range(0, 256).mapToObj(i -> readLargePageHeader(bb)).toArray(LargePageHeader[]::new);
-
+        LargePageHeader[] largePagesHeaders = readLargePageHeaders(bb);
         if (bb.position() != 1280 + 256 * 6) {
             throw new IllegalArgumentException();
         }
@@ -86,18 +35,82 @@ class AnmReader {
         ArrayList<LargePage> lps = new ArrayList<>();
         for (int i = 0; i < largePagesHeaders.length; i++) {
             if (largePagesHeaders[i].nRecords != 0) {
-                bb.position(header.lpfTableOffset + MAX_PAGES * 6 + (i << 16));
+                bb.position(header.getLpfTableOffset() + MAX_PAGES * 6 + (i << 16));
                 lps.add(readLargePage(bb, largePagesHeaders[i]));
             }
         }
 
-        Record[] records = new Record[header.nRecords];
+        Record[] records = new Record[header.getnRecords()];
         for (LargePage lp : lps) {
             int base = lp.header.baseRecord;
             System.arraycopy(lp.records, 0, records, base, lp.header.nRecords);
         }
 
         return new Animation(header, palette, records);
+    }
+
+    private AnmHeader readHeader(ByteBuffer bb) {
+        int id = bb.getInt();
+        if (id != MAGIC) {
+            throw new IllegalArgumentException();
+        }
+        short maxLps = bb.getShort();
+        short nLps = bb.getShort();
+        int nRecords = bb.getInt();
+        short maxRecsPerLps = bb.getShort();
+        short lpfTableOffset = bb.getShort();
+        int contentType = bb.getInt();
+        if (contentType != MAGIC_CONTENT_TYPE) {
+            throw new IllegalArgumentException();
+        }
+        short width = bb.getShort();
+        short height = bb.getShort();
+        byte variant = bb.get();
+        if (variant != 0) {
+            throw new IllegalArgumentException();
+        }
+        byte version = bb.get();
+        byte hasLastDelta = bb.get();
+        byte lastDeltaValid = bb.get();
+        byte pixelType = bb.get();
+        if (pixelType != 0) {
+            throw new IllegalArgumentException();
+        }
+        byte compressionType = bb.get();
+        if (compressionType != 1) {
+            throw new IllegalArgumentException();
+        }
+        byte otherRecsPerFrm = bb.get();
+        if (otherRecsPerFrm != 0) {
+            throw new IllegalArgumentException();
+        }
+        byte bitmapType = bb.get();
+        if (bitmapType != 1) {
+            throw new IllegalArgumentException();
+        }
+        byte[] recordType = new byte[32];
+        bb.get(recordType);
+        int nFrames = bb.getInt();
+        short framesPerSecond = bb.getShort();
+        byte[] pad = new byte[29 * 2];
+        bb.get(pad);
+        Range[] cycles = IntStream.range(0, 16).mapToObj(i -> readRange(bb)).toArray(Range[]::new);
+
+        return new AnmHeader(id, maxLps, nLps, nRecords, maxRecsPerLps, lpfTableOffset, contentType,
+                width, height, variant, version, hasLastDelta, lastDeltaValid, pixelType, compressionType,
+                otherRecsPerFrm, bitmapType, recordType, nFrames, framesPerSecond, pad, cycles);
+    }
+
+    private Palette readPalette(ByteBuffer bb) {
+        int[] paletteEntries = new int[256];
+        for (int i = 0; i < 256; i++) {
+            paletteEntries[i] = bb.getInt();
+        }
+        return new Palette(paletteEntries);
+    }
+
+    private LargePageHeader[] readLargePageHeaders(ByteBuffer bb) {
+        return IntStream.range(0, 256).mapToObj(i -> readLargePageHeader(bb)).toArray(LargePageHeader[]::new);
     }
 
     private LargePageHeader readLargePageHeader(ByteBuffer bb) {

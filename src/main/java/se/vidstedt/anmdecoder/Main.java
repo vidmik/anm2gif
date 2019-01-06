@@ -10,7 +10,7 @@ class Main {
         }
         File inFile = new File(args[0]);
         File outDirectory = new File(args[1]);
-        Animation animation = new AnmReader().decode(inFile);
+        Animation animation = new AnmReader().read(inFile);
         new AnimationDumper(animation).dump(outDirectory);
     }
 }
