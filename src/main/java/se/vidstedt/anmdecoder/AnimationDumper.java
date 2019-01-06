@@ -32,6 +32,6 @@ class AnimationDumper {
             ppmData[i * 3 + 1] = (byte) colors[1];
             ppmData[i * 3 + 2] = (byte) colors[2];
         }
-        new PpmWriter(animation.getHeader().getWidth(), animation.getHeader().getHeight(), file).write(ppmData);
+        new PpmWriter(animation.getHeader().getWidth(), animation.getHeader().getHeight(), file, ppmData).write();
     }
 }
