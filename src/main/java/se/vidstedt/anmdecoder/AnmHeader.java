@@ -18,10 +18,10 @@ class AnmHeader {
     private final byte compressionType;
     private final byte otherRecsPerFrm;
     private final byte bitmapType;
-    final byte[] recordType;
+    private final byte[] recordType;
     private final int nFrames;
     private final short framesPerSecond;
-    final byte[] pad;
+    private final byte[] pad;
     private final Range[] cycles;
 
     public AnmHeader(int id, short maxLps, short nLps, int nRecords, short maxRecsPerLps, short lpfTableOffset, int contentType, short width, short height, byte variant, byte version, byte hasLastDelta, byte lastDeltaValid, byte pixelType, byte compressionType, byte otherRecsPerFrm, byte bitmapType, byte[] recordType, int nFrames, short framesPerSecond, byte[] pad, Range[] cycles) {

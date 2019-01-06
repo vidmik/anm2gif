@@ -5,7 +5,7 @@ import java.nio.ByteOrder;
 
 public class Record {
     private final byte[] data;
-    private final int fileOffset;
+    private final int fileOffset; // for debugging
 
     Record(byte[] data, int fileOffset) {
         this.data = data;
