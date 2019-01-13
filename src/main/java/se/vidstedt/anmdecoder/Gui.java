@@ -37,8 +37,8 @@ public class Gui extends Application {
             exit = true;
         }
 
-        private Color getColor(Palette palette, int i) {
-            int[] color = palette.getPaletteColorComponents(i);
+        private Color getColor(Palette palette, byte i) {
+            byte[] color = palette.getPaletteColorComponents(i);
             return Color.rgb(color[0], color[1], color[2]);
         }
 
@@ -50,8 +50,7 @@ public class Gui extends Application {
                 PixelWriter writer = image.getPixelWriter();
                 for (int y = 0; y < animation.getHeader().getHeight(); y++) {
                     for (int x = 0; x < animation.getHeader().getWidth(); x++) {
-                        int paletteIndex = Byte.toUnsignedInt(pixels[y * animation.getHeader().getWidth() + x]);
-                        writer.setColor(x, y, getColor(animation.getPalette(), paletteIndex));
+                        writer.setColor(x, y, getColor(animation.getPalette(), pixels[y * animation.getHeader().getWidth() + x]));
                     }
                 }
                 currentRecordIndex = recordIndex;

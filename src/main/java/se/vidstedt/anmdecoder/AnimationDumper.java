@@ -24,13 +24,19 @@ class AnimationDumper {
         }
     }
 
+    void dumpGif(File gif) throws IOException {
+        Files.createDirectories(gif.getParentFile().toPath());
+
+        new GifWriter(animation, gif).write();
+    }
+
     private void dumpFrame(File file, byte[] pixels) throws IOException {
         byte[] ppmData = new byte[pixels.length * 3];
         for (int i = 0; i < pixels.length; i++) {
-            int[] colors = animation.getPalette().getPaletteColorComponents(Byte.toUnsignedInt(pixels[i]));
-            ppmData[i * 3] = (byte) colors[0];
-            ppmData[i * 3 + 1] = (byte) colors[1];
-            ppmData[i * 3 + 2] = (byte) colors[2];
+            byte[] colors = animation.getPalette().getPaletteColorComponents(pixels[i]);
+            ppmData[i * 3] = colors[0];
+            ppmData[i * 3 + 1] = colors[1];
+            ppmData[i * 3 + 2] = colors[2];
         }
         new PpmWriter(animation.getHeader().getWidth(), animation.getHeader().getHeight(), file, ppmData).write();
     }

@@ -7,16 +7,16 @@ public class Palette {
         this.palette = palette;
     }
 
-    private int getPalette(int index) {
-        return palette[index];
+    public int getPalette(byte index) {
+        return palette[Byte.toUnsignedInt(index)];
     }
 
-    public int[] getPaletteColorComponents(int index) {
+    public byte[] getPaletteColorComponents(byte index) {
         int color = getPalette(index);
-        return new int[]{
-                (color >> 16) & 0xff, // red
-                (color >> 8) & 0xff,  // green
-                color & 0xff          // blue
+        return new byte[]{
+                (byte)((color >> 16) & 0xff), // red
+                (byte)((color >> 8) & 0xff),  // green
+                (byte)(color & 0xff)          // blue
         };
     }
 }
