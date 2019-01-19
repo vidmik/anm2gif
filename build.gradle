@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+application {
+    mainClassName = "se.vidstedt.anmdecoder.Main"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': application.mainClassName
+    }
+}
