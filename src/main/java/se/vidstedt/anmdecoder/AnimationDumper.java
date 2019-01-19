@@ -25,7 +25,10 @@ class AnimationDumper {
     }
 
     void dumpGif(File gif) throws IOException {
-        Files.createDirectories(gif.getParentFile().toPath());
+        File dir = gif.getParentFile();
+        if (!dir.exists()) {
+            Files.createDirectories(dir.toPath());
+        }
 
         new GifWriter(animation, gif).write();
     }
