@@ -1,7 +1,7 @@
-Deluxe Paint Animation Decoder README
-=====================================
+anm2gif - Deluxe Paint Animation README
+=======================================
 
-Decode and/or display animations using the Deluxe Paint Animation (.ANM) file format.
+Convert and/or display animations using the Deluxe Paint Animation (.ANM) file format.
 
 ## Usage
 
