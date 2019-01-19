@@ -4,7 +4,7 @@ plugins {
 }
 
 application {
-    mainClassName = "se.vidstedt.anmdecoder.Main"
+    mainClassName = "se.vidstedt.anm2gif.Main"
 }
 
 jar {

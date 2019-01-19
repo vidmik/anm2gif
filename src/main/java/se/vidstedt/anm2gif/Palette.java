@@ -1,4 +1,4 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 public class Palette {
     private final int[] palette;

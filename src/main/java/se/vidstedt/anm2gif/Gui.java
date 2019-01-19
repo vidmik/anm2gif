@@ -1,4 +1,4 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 import java.io.File;
 import javafx.application.Application;

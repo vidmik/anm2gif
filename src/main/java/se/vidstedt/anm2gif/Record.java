@@ -1,4 +1,4 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

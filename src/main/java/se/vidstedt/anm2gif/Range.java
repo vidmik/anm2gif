@@ -1,4 +1,4 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 class Range {
     private final short count;

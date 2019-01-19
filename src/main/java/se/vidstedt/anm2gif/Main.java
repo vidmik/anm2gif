@@ -1,11 +1,11 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 import java.io.*;
 
 class Main {
     public static void main(String[] args) throws Exception {
         if (args.length != 2) {
-            System.out.println("Usage: <infile.anm> <out directory>");
+            System.out.println("Usage: <infile.anm> <out.gif | out directory>");
             System.exit(1);
         }
         File inFile = new File(args[0]);

@@ -1,4 +1,4 @@
-package se.vidstedt.anmdecoder;
+package se.vidstedt.anm2gif;
 
 class LargePageHeader {
     private final int baseRecord;
