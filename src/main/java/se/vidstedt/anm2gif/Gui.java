@@ -39,7 +39,10 @@ public class Gui extends Application {
 
         private Color getColor(Palette palette, byte i) {
             byte[] color = palette.getPaletteColorComponents(i);
-            return Color.rgb(color[0], color[1], color[2]);
+            return Color.rgb(
+                    Byte.toUnsignedInt(color[0]),
+                    Byte.toUnsignedInt(color[1]),
+                    Byte.toUnsignedInt(color[2]));
         }
 
         private void showRecord(int recordIndex) {
